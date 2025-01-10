@@ -1,6 +1,6 @@
 ![avatar](https://github.com/OpenIMSDK/OpenIM-Docs/blob/main/docs/images/WechatIMG20.jpeg)
 # OpenMetaOffice-Electron
-
+~
 ## About us
 
 Open im includes instant messaging and real-time audio and video server and client SDK, which realizes important features such as high performance, lightweight and easy expansion. By integrating open im components and privatizing the deployment server, developers can quickly integrate instant messaging and real-time audio and video interaction into their own applications free of charge, and ensure the security and privacy of business data.[Click here](https://www.rentsoft.cn/) to visit our official website to learn more about Open IM.
