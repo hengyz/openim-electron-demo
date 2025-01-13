@@ -8,8 +8,6 @@ import CKEditor, { CKEditorRef, EmojiData } from "@/components/CKEditor";
 import { getCleanText } from "@/components/CKEditor/utils";
 import i18n from "@/i18n";
 import { IMSDK } from "@/layout/MainContentWrap";
-import { Patient } from "@/pages/chat/queryChat/data";
-import MessageItem from "@/pages/chat/queryChat/MessageItem";
 import { getSendAction, setSendAction as saveSendAction } from "@/utils/storage";
 
 import SendActionBar from "./SendActionBar";
@@ -45,23 +43,17 @@ const ChatFooter: ForwardRefRenderFunction<unknown, unknown> = (_, ref) => {
     const cleanText = getCleanText(latestHtml.current);
     setHtml("");
     if (!cleanText) return;
-    if (cleanText.includes("No") || cleanText.includes("no")) {
-      const data = {
-        Detail: "病患信息",
-        Title: "病案号：",
-        MessageBody: cleanText,
-      };
-      const { data: message } = await IMSDK.createCustomMessage({
-        data: JSON.stringify(data),
-        extension: "",
-        description: "",
-      });
-      sendMessage({ message });
-    } else {
-      const message = (await IMSDK.createTextMessage(cleanText)).data;
-      sendMessage({ message });
-    }
+    const data = {
+      msgbody: cleanText,
+    };
+    const {data: message} = await IMSDK.createCustomMessage({
+      data: JSON.stringify(data),
+      extension: "",
+      description: "",
+    });
+    sendMessage({message});
   };
+
 
   const sendEmoji = (item: EmojiData) => ckRef.current?.insertEmoji(item);
 

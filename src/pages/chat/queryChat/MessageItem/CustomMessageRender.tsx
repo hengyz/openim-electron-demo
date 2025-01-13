@@ -12,15 +12,18 @@ const CustomMessageRender: FC<IMessageItemProps> = ({ message }) => {
 
   data = formatLink(data!);
   data = formatBr(data);
-  const patient = JSON.parse(data);
+  const dataInfo = JSON.parse(data);
   return (
     <Twemoji dbSelectAll>
       <div
         className={styles.bubble}
         dangerouslySetInnerHTML={{
-          __html: `${String(patient.Detail)}\n${String(patient.Title)}${String(
-            patient.MessageBody,
-          )}`,
+          __html: `${dataInfo.hisdata !== undefined?
+              dataInfo.hisdata.datacategory+'\n'+
+              dataInfo.hisdata.pid+'\n'+
+              dataInfo.hisdata.pname+'\n'+
+              dataInfo.msgbody:dataInfo.msgbody+'\n'
+          }`
         }}
       ></div>
     </Twemoji>
