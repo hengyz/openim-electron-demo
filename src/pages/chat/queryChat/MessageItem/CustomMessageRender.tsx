@@ -19,10 +19,11 @@ const CustomMessageRender: FC<IMessageItemProps> = ({ message }) => {
         className={styles.bubble}
         dangerouslySetInnerHTML={{
           __html: `${dataInfo.hisdata !== undefined?
+              (dataInfo.clientMsgID !== undefined?dataInfo.clientMsgID+'\n':"")+
               dataInfo.msgbody+'\n'+
               dataInfo.hisdata.pid_title+dataInfo.hisdata.pid+'\n'+
               dataInfo.hisdata.pname_title+dataInfo.hisdata.pname
-              :dataInfo.msgbody+'\n'
+              :(dataInfo.clientMsgID !== undefined?dataInfo.clientMsgID+'\n':"")+dataInfo.msgbody+'\n'
           }`
         }}
       ></div>

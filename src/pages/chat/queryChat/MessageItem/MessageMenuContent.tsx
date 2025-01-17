@@ -16,6 +16,8 @@ import { emit } from "@/utils/events";
 import { getUserCustomEmojis, setUserCustomEmojis } from "@/utils/storage";
 
 import { deleteOneMessage, updateOneMessage } from "../useHistoryMessageList";
+import { useSendMessage } from "@/pages/chat/queryChat/ChatFooter/useSendMessage";
+import {getCleanText} from "@/components/CKEditor/utils";
 
 const messageMenuList = [
   {
@@ -150,6 +152,15 @@ const MessageMenuContent = ({
       case 4:
         tryRemove();
         break;
+      case 5:
+        tryReply();
+        break;
+      case 6:
+        tryReplyY();
+        break;
+      case 7:
+        tryReplyN();
+        break;
       default:
         break;
     }
@@ -189,6 +200,38 @@ const MessageMenuContent = ({
     } catch (error) {
       feedbackToast({ error });
     }
+  };
+  const { sendMessage } = useSendMessage();
+  // 回复
+  const tryReply = async () => {
+    console.log(message);
+    // localStorage.setItem('message',JSON.stringify(message));
+    // window.open('test.html', '_blank'); // '_blank' 表示在新标签页中打开
+  };
+  // 回复Y
+  const tryReplyY = async () => {
+
+    const data = {
+      msgbody: 'Yes',
+    };
+    const {data: message} = await IMSDK.createCustomMessage({
+      data: JSON.stringify(data),
+      extension: "",
+      description: "",
+    });
+    sendMessage({message});
+  };
+  // 回复N
+  const tryReplyN = async () => {
+    const data = {
+      msgbody: 'No',
+    };
+    const {data: message} = await IMSDK.createCustomMessage({
+      data: JSON.stringify(data),
+      extension: "",
+      description: "",
+    });
+    sendMessage({message});
   };
 
   const getCopyText = () => {

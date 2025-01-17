@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+<div>
+    <div id="oldMessage"></div>
+
+    <div>
+        <textarea id="replyMessage"></textarea>
+        <button onclick="reply()">回复</button>
+    </div>
+</div>
+<script>
+    const data = localStorage.getItem('message');
+    console.log(data);
+    const dataInfo = JSON.parse(data);
+    messageData=dataInfo==null?'':dataInfo.customElem.data;
+    oldMessageDate=messageData==null?null:JSON.parse(messageData);
+
+    document.getElementById("oldMessage").innerHTML=
+        oldMessageDate==null?null:
+            oldMessageDate.hisdata==null?oldMessageDate.msgbody:
+                'Message Category='+oldMessageDate.hisdata.datacategory+'</br>'+
+                oldMessageDate.hisdata.pid_title+oldMessageDate.hisdata.pid+'    '+
+                oldMessageDate.hisdata.pname_title+oldMessageDate.hisdata.pname+'</br>'+
+                oldMessageDate.msgbody;
+    function reply(){
+        let value = document.getElementById("replyMessage").value;
+        if (!value) {
+            alert("请输入要回复的信息");
+            return;
+        }
+        // 调用接口发送数据
+        const xhr = new XMLHttpRequest();
+        xhr.open('post', 'http://139.196.84.78:10002/auth/get_admin_token', true);
+        xhr.setRequestHeader("Content-Type","application/json");
+        xhr.setRequestHeader("operationID",new Date().getTime());
+        xhr.send(JSON.stringify({
+            "secret": "openIM123",
+            "userID": "imAdmin"
+        }));
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                console.log(xhr.responseText);
+                // 获取token
+                const token = JSON.parse(xhr.responseText).data.token;
+                if (!token) {
+                    alert("获取IM系统的Token失败！请联系管理员");
+                }else {
+                    // 发送回复的信息
+                    const xhr1 = new XMLHttpRequest();
+                    xhr1.open('post', 'http://139.196.84.78:10002/msg/send_msg', true);
+                    xhr1.setRequestHeader("Content-Type","application/json");
+                    xhr1.setRequestHeader("operationID",new Date().getTime());
+                    xhr1.setRequestHeader("token",token);
+                    xhr1.send(JSON.stringify({
+                        "sendID": dataInfo.recvID,
+                        "recvID": dataInfo.sendID,
+                        "groupID": "",
+                        "senderNickname": "",
+                        "senderFaceURL": "http://www.head.com",
+                        "senderPlatformID": 10,
+                        "content": {
+                        "data": "{\"clientMsgID\":\""+dataInfo.clientMsgID+"\",\"msgbody\":\""+value+"\"}",
+                            "description": "",
+                            "extension": ""
+                    },
+                        "contentType": 110,
+                        "sessionType": 1,
+                        "isOnlineOnly": false,
+                        "notOfflinePush": false,
+                        "sendTime": new Date().getTime(),
+                        "offlinePushInfo": {
+                        "title": "send message",
+                            "desc": "",
+                            "ex": "",
+                            "iOSPushSound": "default",
+                            "iOSBadgeCount": true
+                    },
+                        "ex": "ex"
+                    }))
+                    xhr1.onreadystatechange = function() {
+                        if (xhr1.readyState === 4 && xhr1.status === 200) {
+                            const sendResult = JSON.parse(xhr1.responseText);
+                            console.log(sendResult);
+                            if (sendResult.errCode===0){
+                                // 发送信息成功则关闭当前页面
+                                window.close();
+                            }
+                        }
+                    }
+                }
+            }
+        };
+    }
+</script>
+</body>
+</html>
